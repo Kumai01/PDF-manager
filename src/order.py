@@ -9,16 +9,16 @@ def run_order():
 
     pages = []
     while True:
-        page = input("Enter page number (or 'done' to finish): ").strip()
-        if page.lower() == "done" :
+        page = int(input("Enter page number (or '-1' to finish): ").strip())
+        if page == -1 :
             break
         
         try:
-            if int(page) > num_pages:
+            if page > num_pages:
                 raise ValueError
             pages.append(int(page) - 1)
         except ValueError:
-            print("Please enter a valid number or 'done' to finish.")
+            print("Please enter a valid number or '-1' to finish.")
     
     try:
         before = int(input("Enter after what page you want to put the pages: ").strip()) - 1
