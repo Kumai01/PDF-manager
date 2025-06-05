@@ -4,7 +4,6 @@ from pathlib import Path
 import tkinter as tk
 from tkinter import ttk, filedialog
 
-from cli import interactive_merge
 from utils import write_output
 
 class PDFMergerManager:
@@ -18,9 +17,10 @@ class PDFMergerManager:
         self.merger.append(file)
 
     def write_output(self, output_name = None):
-        write_output(self.merger, output_name, self.first_file)
+        return write_output(self.merger, output_name, self.first_file)
 
 if __name__ == "__main__":
+    from cli import interactive_merge
     interactive_merge()
 
 def merge_window():

@@ -3,7 +3,6 @@ from PyPDF2 import PdfWriter as w
 from pathlib import Path
 
 from utils import write_output
-from cli import interactive_order
 
 import tkinter as tk
 from tkinter import ttk
@@ -17,7 +16,9 @@ class PDFOrderManager:
     def num_pages(self):
         return len(self.order.pages)
 
-    def order_pages(self, pages_together, before):
+    def order_pages(self, pages_together, before = None):
+        if before is None:
+            before = self.num_pages - 1
         new_order = []
         for i in range(self.num_pages):
             if i in pages_together:
@@ -33,10 +34,11 @@ class PDFOrderManager:
             result.add_page(self.main_file.pages[i])
 
     def write_output(self, output_name = None):
-        write_output(self.order, output_name, self.main_file)
+        return write_output(self.order, output_name, self.main_file)
 
         
 if __name__ == "__main__":
+    from cli import interactive_order
     interactive_order()
 
 def order_window():

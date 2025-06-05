@@ -12,13 +12,29 @@ def main():
 
     merge_parser = subparsers.add_parser("merge")
     merge_parser.add_argument("files", nargs="+", help="PDF files to merge")
-    merge_parser.add_argument("-o", "--output", required=True, help="Ouput PDF file")
+    merge_parser.add_argument("-o", "--output", help="Ouput PDF file")
 
+    order_parser = subparsers.add_parser("order")
+    order_parser.add_argument("file", help="PDF file to order")
+    order_parser.add_argument("pages", nargs="+", help="All pages that comes last or after a page")
+    order_parser.add_argument("--after", help="The page that pages come after")
     args = parser.parse_args()
     if args.command == "merge":
-        merge_parser.print_help
+        merge_args(args.files, args.output)
+    elif args.command == "order":
+        order_args(args.pages, args.after)
     else:
         interactive_mode()
+
+def merge_args(files, output):
+    merger = PDFMergerManager()
+    for file in files:
+        merger.add_file(file)
+    print("file is in ./", merger.write_output(output))
+
+def order_args(file, pages, before):
+    order = PDFOrderManager(file)
+    order.order_pages(pages, before)
 
 def interactive_mode():
     while True:
@@ -93,7 +109,7 @@ def interactive_cut():
     file_name = input("Enter file name: ")
     cut_pages = int(input("Enter pages to cut: "))
     cut_file(file_name, cut_pages)
-    
+
 if __name__ == "__main__":
     main()
 
