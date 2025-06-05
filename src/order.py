@@ -2,48 +2,42 @@ from PyPDF2 import PdfReader as r
 from PyPDF2 import PdfWriter as w
 from pathlib import Path
 
-def run_order():
-    main_path = input("give the path to the main file: \n")  
-    main_file = r(main_path)
-    num_pages = len(main_file.pages)
+from utils import write_output
+from cli import interactive_order
 
-    pages = []
-    while True:
-        page = int(input("Enter page number (or '-1' to finish): ").strip())
-        if page == -1 :
-            break
-        
-        try:
-            if page > num_pages:
-                raise ValueError
-            pages.append(int(page) - 1)
-        except ValueError:
-            print("Please enter a valid number or '-1' to finish.")
-    
-    try:
-        before = int(input("Enter after what page you want to put the pages: ").strip()) - 1
-        if before > num_pages or before in pages:
-            raise ValueError
-    except ValueError:
-        print("Please enter a valid page that is not in the moved pages")
-        
-    new_order = []
-    for i in range(num_pages):
-        if i in pages:
-            continue
+import tkinter as tk
+from tkinter import ttk
+from tkinter import filedialog
 
-        new_order.append(i)
-        
-        if i == before:
-            new_order.extend(pages)
+class PDFOrderManager:
+    def __init__(self, main_file):
+        self.main_file = main_file
+        self.order = r()
 
-    result = w()
-    for i in new_order:
-        result.add_page(main_file.pages[i])
-    
-    Path("output").mkdir(exist_ok=True)
-    result.write(Path("output") / Path(main_path).name)
+    def num_pages(self):
+        return len(self.order.pages)
+
+    def order_pages(self, pages_together, before):
+        new_order = []
+        for i in range(self.num_pages):
+            if i in pages_together:
+                continue
+
+            new_order.append(i)
+            
+            if i == before:
+                new_order.extend(pages_together)
+
+        result = w()
+        for i in new_order:
+            result.add_page(self.main_file.pages[i])
+
+    def write_output(self, output_name = None):
+        write_output(self.order, output_name, self.main_file)
 
         
 if __name__ == "__main__":
-    run_order()
+    interactive_order()
+
+def order_window():
+    pass
