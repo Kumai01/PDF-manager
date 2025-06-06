@@ -2,6 +2,7 @@ import argparse
 from merge import PDFMergerManager
 from order import *
 from cut import cut_file
+from utils import 
 
 def main():
     parser = argparse.ArgumentParser(prog="pdfm"
@@ -55,13 +56,8 @@ def interactive_mode():
 
 def interactive_merge():
     merger = PDFMergerManager()
-    while True:
-        main_path = input("Give the path to the main file: ").strip()
-        try:
-            merger.add_file(main_path)
-            break
-        except Exception as e:
-            print(f"Error: {e}\nPlease try again.")
+
+    merger.add_file(validate_file_path())
 
     try:
         n = int(input("# of files you want to merge: "))
@@ -77,8 +73,7 @@ def interactive_merge():
     print("output is in: ", merger.write_output())
     
 def interactive_order():
-    main_path = input("give the path to the main file: \n")  
-    order = PDFOrderManager(main_path)
+    order = PDFOrderManager(validate_file_path())
     num_pages = order.num_pages()
 
     pages = []
@@ -104,11 +99,18 @@ def interactive_order():
     
     print("output is in: ", order.write_output())
 
-
 def interactive_cut():
-    file_name = input("Enter file name: ")
+    path = validate_file_path()
     cut_pages = int(input("Enter pages to cut: "))
-    cut_file(file_name, cut_pages)
+    cut_file(path, cut_pages)
+
+def validate_file_path():
+    while True:
+        path = input("Give the path to the main file: ").strip()
+        if Path(path).exists():
+            return path
+        else:
+            print(f"file: {path} not found\n Please try again.")
 
 if __name__ == "__main__":
     main()
