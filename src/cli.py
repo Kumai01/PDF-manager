@@ -2,7 +2,6 @@ import argparse
 from merge import PDFMergerManager
 from order import *
 from cut import cut_file
-from utils import 
 
 def main():
     parser = argparse.ArgumentParser(prog="pdfm"
@@ -19,23 +18,30 @@ def main():
     order_parser.add_argument("file", help="PDF file to order")
     order_parser.add_argument("pages", nargs="+", help="All pages that comes last or after a page")
     order_parser.add_argument("--after", help="The page that pages come after")
+    order_parser.add_argument("-o", "--output", help="Ouput PDF file")
+
     args = parser.parse_args()
     if args.command == "merge":
         merge_args(args.files, args.output)
     elif args.command == "order":
-        order_args(args.pages, args.after)
+        order_args(args.file, args.pages, args.after, args.output)
     else:
         interactive_mode()
 
 def merge_args(files, output):
     merger = PDFMergerManager()
     for file in files:
+        validate_file_path(file)
         merger.add_file(file)
-    print("file is in ./", merger.write_output(output))
+    final_path = merger.write_output(output)
+    print("file is in ", Path(final_path))
 
-def order_args(file, pages, before):
+def order_args(file, pages, before, output):
+    validate_file_path(file)
     order = PDFOrderManager(file)
-    order.order_pages(pages, before)
+    order.order_pages([int(c) for c in pages], int(before))
+    final_path = order.write_output(output)
+    print("file is in: ", Path(final_path))
 
 def interactive_mode():
     while True:
@@ -104,7 +110,13 @@ def interactive_cut():
     cut_pages = int(input("Enter pages to cut: "))
     cut_file(path, cut_pages)
 
-def validate_file_path():
+def validate_file_path(path):
+    if not Path(path).exists():
+        print(Path(path).resolve())
+        print(Path.cwd())
+        raise Exception(FileNotFoundError)
+    
+def validate_file_path_interactive():
     while True:
         path = input("Give the path to the main file: ").strip()
         if Path(path).exists():

@@ -14,6 +14,12 @@ class PDFMergerManager:
     def add_file(self, file):
         if not self.first_file:
             self.first_file = file
+
+        p = Path(file)
+        if p.suffix.lower() != ".pdf":
+            p = p.with_suffix(".pdf")
+        file = str(p)
+        
         self.merger.append(file)
 
     def write_output(self, output_name = None):
