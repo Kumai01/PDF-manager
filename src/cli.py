@@ -31,13 +31,13 @@ def main():
 def merge_args(files, output):
     merger = PDFMergerManager()
     for file in files:
-        validate_file_path(file)
+        file = validate_file_path(file)
         merger.add_file(file)
     final_path = merger.write_output(output)
     print("file is in ", Path(final_path))
 
 def order_args(file, pages, before, output):
-    validate_file_path(file)
+    file = validate_file_path(file)
     order = PDFOrderManager(file)
     order.order_pages([int(c) for c in pages], int(before))
     final_path = order.write_output(output)
@@ -110,9 +110,14 @@ def interactive_cut():
     cut_pages = int(input("Enter pages to cut: "))
     cut_file(path, cut_pages)
 
-def validate_file_path(path):
-    if not Path(path).exists():
-        exit(f"File not Found \nPath of the file: {Path(path).resolve()} \nPath of the current directory: {Path.cwd()}")
+def validate_file_path(file):
+    p = Path(file)
+    if p.suffix.lower() != ".pdf":
+        p = p.with_suffix(".pdf")
+    file = str(p)
+    if not Path(file).exists():
+        exit(f"File not Found \nPath of the file: {Path(file).resolve()} \nPath of the current directory: {Path.cwd()}")
+    return file
     
 def validate_file_path_interactive():
     while True:
