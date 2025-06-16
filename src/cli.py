@@ -112,9 +112,7 @@ def interactive_cut():
 
 def validate_file_path(path):
     if not Path(path).exists():
-        print(Path(path).resolve())
-        print(Path.cwd())
-        raise Exception(FileNotFoundError)
+        exit(f"File not Found \nPath of the file: {Path(path).resolve()} \nPath of the current directory: {Path.cwd()}")
     
 def validate_file_path_interactive():
     while True:
