@@ -3,7 +3,7 @@ from PyPDF2 import PdfMerger as m
 import tkinter as tk
 from tkinter import ttk, filedialog
 
-from utils import write_output
+from .utils import write_output
 
 class PDFMergerManager:
     def __init__(self):

@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import ttk # For themed widgets
-from merge import merge_window
-from order import order_window
+from .merge import merge_window
+from .order import order_window
 
 def main():
     root = tk.Tk()

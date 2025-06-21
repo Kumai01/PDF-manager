@@ -1,6 +1,6 @@
 from PyPDF2 import PdfReader as r
 from PyPDF2 import PdfWriter as w
-from utils import write_output
+from .utils import write_output
 
 class PDFCutterManager:
     def __init__(self, file):

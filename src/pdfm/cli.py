@@ -1,11 +1,11 @@
 import argparse
 from pathlib import Path
 
-from __version__ import __version__
-from merge import PDFMergerManager
-from order import PDFOrderManager
-from cut import PDFCutterManager
-from cut import cut_file
+from .__version__ import __version__
+from .merge import PDFMergerManager
+from .order import PDFOrderManager
+from .cut import PDFCutterManager
+from .cut import cut_file
 
 def main():
     parser = argparse.ArgumentParser(prog="pdfm"

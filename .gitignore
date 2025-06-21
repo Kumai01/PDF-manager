@@ -1,4 +1,4 @@
 *.pdf
 pdfm_output/
 __pycache__/
-src/pdfm.egg-info
+src/pdfm/pdfm.egg-info

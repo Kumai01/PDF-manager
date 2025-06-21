@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 from pathlib import Path
 
 def get_version():
-    version_file = Path("pdfm/__init__.py").read_text()
+    version_file = Path("src/pdfm/__version__.py").read_text()
     for line in version_file.splitlines():
         if line.startswith("__version__"):
             delim = '"' if '"' in line else "'"
@@ -16,7 +16,7 @@ setup(
     packages=find_packages(where="src"),
     entry_points={
         'console_scripts': [
-            'pdfm=cli:main',
+            'pdfm = pdfm.cli:main',
         ],
     },
     install_requires=[
