@@ -4,4 +4,7 @@
 ### 2. install pyPDF2 
 `pip install PyPDF2`
 ### 3. run the program and do as instructed:
-`python main.py`
+`pip install .`
+
+Or, if you want to install in editable mode (great for development):
+`pip install -e .`

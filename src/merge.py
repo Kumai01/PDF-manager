@@ -1,5 +1,4 @@
 from PyPDF2 import PdfMerger as m
-from pathlib import Path
 
 import tkinter as tk
 from tkinter import ttk, filedialog
