@@ -4,8 +4,7 @@ from pathlib import Path
 from .__version__ import __version__
 from .merge import PDFMergerManager
 from .order import PDFOrderManager
-from .cut import PDFCutterManager
-from .cut import cut_file
+from .cut import PDFCutterManager, cut_file
 from .gui import run_gui
 
 def main():
