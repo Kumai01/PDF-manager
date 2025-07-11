@@ -6,6 +6,7 @@ from .merge import PDFMergerManager
 from .order import PDFOrderManager
 from .cut import PDFCutterManager
 from .cut import cut_file
+from .gui import run_gui
 
 def main():
     parser = argparse.ArgumentParser(prog="pdfm"
@@ -14,6 +15,8 @@ def main():
     # args.command
     parser.add_argument("--version", action="version", version='%(prog)s ' + __version__)
     subparsers = parser.add_subparsers(dest="command")
+
+    gui_parser = subparsers.add_parser("gui")
 
     merge_parser = subparsers.add_parser("merge")
     merge_parser.add_argument("files", nargs="+", help="PDF files to merge")
@@ -37,6 +40,8 @@ def main():
         order_args(args.file, args.pages, args.after, args.output)
     elif args.command == "cut":
         cut_args(args.file, args.pages, args.output)
+    elif args.command == "gui":
+        run_gui()
     else:
         interactive_mode()
 

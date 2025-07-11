@@ -3,7 +3,7 @@ from tkinter import ttk # For themed widgets
 from .merge import merge_window
 from .order import order_window
 
-def main():
+def run_gui():
     root = tk.Tk()
     root.title("PDF Manager")
 
@@ -18,4 +18,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    run_gui()
