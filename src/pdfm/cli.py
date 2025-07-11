@@ -68,7 +68,7 @@ def interactive_mode():
                 case "merge":
                     interactive_merge()
                 case "order":
-                    run_order_cli()
+                    interactive_order()
                 case "cut":
                     interactive_cut()
                 case "exit":
