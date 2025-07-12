@@ -32,6 +32,9 @@ class Application(tk.Tk):
     def create_merge_tab(self):
         merge_tab = ttk.Frame(self.notebook, width=400, height=280)
         self.notebook.add(merge_tab, text="Merge")
+        merge_tab.rowconfigure(0, weight=0)
+        merge_tab.rowconfigure(1, weight=1)
+        merge_tab.rowconfigure(2, weight=0)
         
         for col in range(3):
             merge_tab.columnconfigure(col, weight=1)
@@ -41,9 +44,9 @@ class Application(tk.Tk):
         
 
         files = []
-        ttk.Button(merge_tab, text="Choose File", command=lambda : self.choose_files(listbox, files)).grid(row=0, column=0, sticky="wne", columnspan=3)
+        ttk.Button(merge_tab, text="Choose Files", command=lambda : self.choose_files(listbox, files)).grid(row=0, column=0, sticky="wne", columnspan=3)
     
-        ttk.Button(merge_tab, text="Merge files", command=lambda : self.merge(files)).grid(row=2, column=0, sticky="wne", columnspan=3)
+        ttk.Button(merge_tab, text="Merge files", command=lambda : self.merge(files)).grid(row=2, column=0, sticky="wse", columnspan=3)
 
     
     def create_order_tab(self):
