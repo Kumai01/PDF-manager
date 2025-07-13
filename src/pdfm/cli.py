@@ -85,8 +85,6 @@ def interactive_mode():
 def interactive_merge():
     merger = PDFMergerManager()
 
-    merger.add_file(validate_file_path())
-
     try:
         n = int(input("# of files you want to merge: "))
     except ValueError:
