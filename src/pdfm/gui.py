@@ -30,23 +30,13 @@ class Application(tk.Tk):
         self.notebook.add(home_tab, text="Home")
     
     def create_merge_tab(self):
-        merge_tab = ttk.Frame(self.notebook, width=400, height=280)
+        merge_tab = Tab(self)
         self.notebook.add(merge_tab, text="Merge")
-        merge_tab.rowconfigure(0, weight=0)
-        merge_tab.rowconfigure(1, weight=1)
-        merge_tab.rowconfigure(2, weight=0)
-        
-        for col in range(3):
-            merge_tab.columnconfigure(col, weight=1)
-
-        listbox = tk.Listbox(merge_tab)
-        listbox.grid(row=1, column=0, columnspan=3, sticky="nsew")
-        
 
         files = []
-        ttk.Button(merge_tab, text="Choose Files", command=lambda : self.choose_files(listbox, files)).grid(row=0, column=0, sticky="wne", columnspan=3)
-    
-        ttk.Button(merge_tab, text="Merge files", command=lambda : self.merge(files)).grid(row=2, column=0, sticky="wse", columnspan=3)
+        listbox = merge_tab.create_listbox(row=1)
+        merge_tab.create_wide_button(text="Choose Files", command=lambda : self.choose_files(listbox, files), row=0)
+        merge_tab.create_wide_button(text="Merge Files", command=lambda : self.merge(files), row=2)
 
     
     def create_order_tab(self):
@@ -59,7 +49,7 @@ class Application(tk.Tk):
             filetypes=[("PDF Files", "*.pdf")]
         )
         if file_path:
-            files.append
+            files.append(file_path)
             listbox.insert(tk.END, file_path)
 
     def merge(self, files):
@@ -67,14 +57,27 @@ class Application(tk.Tk):
         for file in files:
             merger.add_file(file)
         final_path = merger.write_output()
-        messagebox.showinfo("Success", f"Files are merged in: {final_path}!")
+        messagebox.showinfo("Success", f"Files are merged in: {final_path}")
 
 
-class Frame(tk.Frame):
+class Tab(ttk.Frame):
     def __init__(self, parent):
-        super().__init__(parent)
-        self.grid(row=0, column=0)
-        ttk.Label(self, text="thatWorked").grid(row=0, column=0)
+        super().__init__(parent, width=400, height=280)
+        self.rowconfigure(0, weight=0)
+        self.rowconfigure(1, weight=1)
+        self.rowconfigure(2, weight=0)
+        
+        for col in range(3):
+            self.columnconfigure(col, weight=1)
+
+    def create_listbox(self, row=1):
+        listbox = tk.Listbox(self)
+        listbox.grid(row=row, column=0, columnspan=3, sticky="nsew")
+        return listbox
+
+    def create_wide_button(self, text, command, row):
+        ttk.Button(self, text=text, command=command).grid(row=row, column=0, sticky="wne", columnspan=3)
+        return
 
 
 if __name__ == "__main__":
