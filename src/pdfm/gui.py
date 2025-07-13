@@ -12,7 +12,7 @@ def run_gui():
 class Application(tk.Tk):
     def __init__(self):
         super().__init__()
-        self.geometry("400x300")
+        self.geometry("700x600")
         self.title("PDF Manager")
 
         self.columnconfigure(0, weight=1)
@@ -34,8 +34,8 @@ class Application(tk.Tk):
         self.notebook.add(merge_tab, text="Merge")
 
         files = []
-        listbox = merge_tab.create_listbox(row=1)
-        merge_tab.create_wide_button(text="Choose Files", command=lambda : self.choose_files(listbox, files), row=0)
+        self.listbox = merge_tab.create_listbox(row=1)
+        merge_tab.create_wide_button(text="Choose Files", command=lambda : self.choose_files(files), row=0)
         merge_tab.create_wide_button(text="Merge Files", command=lambda : self.merge(files), row=2)
 
     
@@ -43,14 +43,18 @@ class Application(tk.Tk):
         order_tab = ttk.Frame(self.notebook, width=400, height=280)
         self.notebook.add(order_tab, text="Order")
 
-    def choose_files(self, listbox, files: list):
+    def choose_file(self) -> str :
         file_path = filedialog.askopenfilename(
             title="Select a File",
             filetypes=[("PDF Files", "*.pdf")]
         )
         if file_path:
-            files.append(file_path)
-            listbox.insert(tk.END, file_path)
+            return file_path
+
+    def choose_files(self, files: list):
+        file_path = self.choose_file()
+        files.append(file_path)
+        self.listbox.insert(tk.END, file_path)
 
     def merge(self, files):
         merger = PDFMergerManager()
@@ -58,6 +62,8 @@ class Application(tk.Tk):
             merger.add_file(file)
         final_path = merger.write_output()
         messagebox.showinfo("Success", f"Files are merged in: {final_path}")
+        files = []
+        self.listbox.delete(0, tk.END)
 
 
 class Tab(ttk.Frame):
