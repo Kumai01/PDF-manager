@@ -29,6 +29,9 @@ class Application(tk.Tk):
     def create_home_tab(self) -> None:
         home_tab: ttk.Frame = ttk.Frame(self.notebook, width=400, height=280)
         self.notebook.add(home_tab, text="Home")
+
+        label: ttk.Label = ttk.Label(home_tab, text="Welcome to PDF-Manager", font=("Arial", 12, "bold"))
+        label.place(relx=0.5, rely=0.5, anchor=tk.CENTER)
     
     def create_merge_tab(self) -> None:
         merge_tab: Tab = Tab(self)
