@@ -21,6 +21,7 @@ setup(
     },
     install_requires=[
         "PyPDF2",
+        "img2pdf"
     ],
 )
 
