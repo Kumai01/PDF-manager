@@ -9,10 +9,14 @@ def write_output(writer, output_name, first_file):
             else:
                 # this case should not happen
                 output_name = "merged.pdf"
-        elif len(output_name) < 4 or output_name[-4:] != ".pdf":
-              output_name += ".pdf"
+        else:
+            output_name = write_suffix_if_needed(output_name)              
 
         output_path = Path("pdfm_output").resolve() / output_name
         writer.write(output_path)
         writer.close()
         return output_path
+
+def write_suffix_if_needed(name: str) -> str:
+     if len(name) < 4 or name[-4:] != ".pdf":
+        name += ".pdf"
