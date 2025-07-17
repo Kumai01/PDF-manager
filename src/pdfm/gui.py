@@ -1,6 +1,6 @@
 from typing import List, Dict, Optional, Union, Callable, Any
 import tkinter as tk
-from tkinter import filedialog, messagebox
+from tkinter import filedialog, simpledialog, messagebox, StringVar
 from tkinter import ttk # For themed widgets
 
 from pdfm.merge import PDFMergerManager
@@ -22,6 +22,7 @@ class Application(tk.Tk):
         self.notebook: ttk.Notebook = ttk.Notebook(self)
         self.notebook.grid(row=0, column=0, sticky="nsew")
 
+        self.file_path_var = StringVar(self)
         self.create_home_tab()
         self.create_merge_tab()
         self.create_order_tab()
@@ -42,10 +43,19 @@ class Application(tk.Tk):
         merge_tab.create_wide_button(text="Choose Files", command=lambda : self.update_files(files), row=0)
         merge_tab.create_wide_button(text="Merge Files", command=lambda : self.merge(files), row=2)
 
-    
     def create_order_tab(self) -> None:
-        order_tab: ttk.Frame = ttk.Frame(self.notebook, width=400, height=280)
-        self.notebook.add(order_tab, text="Order")
+        self.order_tab: Tab = Tab(self)
+        self.notebook.add(self.order_tab, text="Order")
+
+        self.order_tab.create_wide_button(text="Choose a File", command=self.choose_file_and_order_buttons, row=0)
+        self.order_tab.create_label(text=self.file_path_var, row=2)
+
+        self.order_tab.create_wide_button(text="Order", command=lambda : self.order(), row=3)
+
+    def choose_file_and_order_buttons(self) -> None:
+        self.choose_file()
+        ttk.Button(self.order_tab, text="Reorder all pages", command=self.take_pages_all).grid(row=1, column=0, sticky="wne", columnspan=2)
+        ttk.Button(self.order_tab, text="Reorder some pages", command=self.take_pages_some).grid(row=1, column=2, sticky="wne", columnspan=2)
 
     def choose_file(self) -> str :
         file_path: str = filedialog.askopenfilename(
@@ -53,6 +63,7 @@ class Application(tk.Tk):
             filetypes=[("PDF Files", "*.pdf")]
         )
         if file_path:
+            self.file_path_var.set(file_path)
             return file_path
 
     def update_files(self, files: List[str]) -> None:
@@ -69,6 +80,16 @@ class Application(tk.Tk):
         files = []
         self.listbox.delete(0, tk.END)
 
+    def order(self):
+        ...
+
+    def take_pages_all(self):
+        order_str = simpledialog.askstring("Page Order", f"Enter new order (1-20), comma-separated):")
+        if not order_str:
+            return
+    def take_pages_some(self):
+        ...
+        
 
 class Tab(ttk.Frame):
     def __init__(self, parent: tk.Tk|ttk.Frame):
@@ -77,18 +98,19 @@ class Tab(ttk.Frame):
         self.rowconfigure(1, weight=1)
         self.rowconfigure(2, weight=0)
         
-        for col in range(3):
+        for col in range(4):
             self.columnconfigure(col, weight=1)
 
     def create_listbox(self, row:int = 1) -> tk.Listbox:
         listbox: tk.Listbox = tk.Listbox(self)
-        listbox.grid(row=row, column=0, columnspan=3, sticky="nsew")
+        listbox.grid(row=row, column=0, columnspan=4, sticky="nsew")
         return listbox
 
     def create_wide_button(self, text: str, command: Callable, row: int) -> None:
-        ttk.Button(self, text=text, command=command).grid(row=row, column=0, sticky="wne", columnspan=3)
-        return
+        ttk.Button(self, text=text, command=command).grid(row=row, column=0, sticky="wne", columnspan=4)
 
+    def create_label(self, text: str, row: int) -> None:
+        ttk.Label(self, textvariable=text).grid(row=row, column=0, sticky="wne", columnspan=4)
 
 if __name__ == "__main__":
     run_gui()
