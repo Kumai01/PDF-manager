@@ -47,20 +47,20 @@ def main():
 def merge_args(files, output):
     merger = PDFMergerManager()
     for file in files:
-        file = validate_file_path(file)
+        file = validate_pdf_path(file)
         merger.add_file(file)
     final_path = merger.write_output(output)
     print("file is in ", Path(final_path))
 
 def order_args(file, pages, before, output):
-    file = validate_file_path(file)
+    file = validate_pdf_path(file)
     order = PDFOrderManager(file)
     order.order_pages([int(c) for c in pages], int(before))
     final_path = order.write_output(output)
     print("file is in: ", Path(final_path))
 
 def cut_args(file, pages, output):
-    file = validate_file_path(file)
+    file = validate_pdf_path(file)
     cutter = PDFCutterManager(file)
     cutter.cut(pages)
     cutter.write_output(output)
@@ -130,15 +130,26 @@ def interactive_cut():
     cut_pages = int(input("Enter pages to cut: "))
     cut_file(path, cut_pages)
 
-def validate_file_path(file):
+def validate_suffix(file: str, suffix: str) -> str : # suffix should sth. like: '.pdf' or '.jpg'
     p = Path(file)
-    if p.suffix.lower() != ".pdf":
-        p = p.with_suffix(".pdf")
-    file = str(p)
+    if p.suffix.lower() != suffix:
+        p = p.with_suffix(suffix)
+    return str(p)
+
+def validate_file_path(file):
     if not Path(file).exists():
         exit(f"File not Found \nPath of the file: {Path(file).resolve()} \nPath of the current directory: {Path.cwd()}")
     return file
-    
+
+def validate_pdf_path(file: str) -> str:
+    file = validate_suffix(file, ".pdf")
+    file = validate_file_path()
+    return file
+
+def validate_img_path(file: str) -> str:
+    file = validate_suffix(file, ".jpg") # TODO it should autmotically check the suffix instead of adding .jpg 
+    file = validate_file_path()
+
 def validate_file_path_interactive():
     while True:
         path = input("Give the path to the main file: ").strip()
