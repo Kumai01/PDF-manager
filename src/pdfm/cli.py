@@ -78,7 +78,7 @@ def convert_args(files: List[str], output: str) -> None:
 
 def interactive_mode():
     while True:
-            cs = input("choose => merge - order - cut - exit: ").strip()
+            cs = input("choose => merge - order - cut - convert - exit: ").strip()
             match cs:
                 case "merge":
                     interactive_merge()
@@ -86,6 +86,8 @@ def interactive_mode():
                     interactive_order()
                 case "cut":
                     interactive_cut()
+                case "convert": 
+                    interactive_convert()
                 case "exit":
                     print("Exiting program.")
                     break
@@ -140,6 +142,9 @@ def interactive_cut():
     path = validate_file_path()
     cut_pages = int(input("Enter pages to cut: "))
     cut_file(path, cut_pages)
+
+def interactive_convert(): # TODO
+    print("Will be added later")
 
 def validate_suffix(file: str, suffix: str) -> str : # suffix should sth. like: '.pdf' or '.jpg'
     p = Path(file)
