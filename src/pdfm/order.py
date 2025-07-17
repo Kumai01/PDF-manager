@@ -29,7 +29,9 @@ class PDFOrderManager:
             
             if i == before:
                 new_order.extend(pages_together)
+        self.order_pages(new_order=new_order)
 
+    def order_pages(self, new_order):
         self.writer = w()
         for i in new_order:
             self.writer.add_page(self.reader.pages[i - 1])
