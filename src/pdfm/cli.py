@@ -1,3 +1,4 @@
+from typing import List
 import argparse
 from pathlib import Path
 
@@ -5,6 +6,7 @@ from .__version__ import __version__
 from .merge import PDFMergerManager
 from .order import PDFOrderManager
 from .cut import PDFCutterManager, cut_file
+from .convert import convert
 from .gui import run_gui
 
 def main():
@@ -32,6 +34,10 @@ def main():
     cut_parser.add_argument("pages", nargs="+", help="Pages to cut")
     cut_parser.add_argument("-o", "--output", help="Ouput PDF file")
 
+    convert_parser = subparsers.add_parser("convert")
+    convert_parser.add_argument("files", nargs="+", help="images to convert")
+    convert_parser.add_argument("-o", "--output", help="Ouput PDF file")
+
     args = parser.parse_args()
     if args.command == "merge":
         merge_args(args.files, args.output)
@@ -39,6 +45,8 @@ def main():
         order_args(args.file, args.pages, args.after, args.output)
     elif args.command == "cut":
         cut_args(args.file, args.pages, args.output)
+    elif args.command == "convert":
+        convert_args(args.files, args.output)
     elif args.command == "gui":
         run_gui()
     else:
@@ -47,27 +55,30 @@ def main():
 def merge_args(files, output):
     merger = PDFMergerManager()
     for file in files:
-        file = validate_file_path(file)
+        file = validate_pdf_path(file)
         merger.add_file(file)
     final_path = merger.write_output(output)
     print("file is in ", Path(final_path))
 
 def order_args(file, pages, before, output):
-    file = validate_file_path(file)
+    file = validate_pdf_path(file)
     order = PDFOrderManager(file)
     order.order_pages([int(c) for c in pages], int(before))
     final_path = order.write_output(output)
     print("file is in: ", Path(final_path))
 
 def cut_args(file, pages, output):
-    file = validate_file_path(file)
+    file = validate_pdf_path(file)
     cutter = PDFCutterManager(file)
     cutter.cut(pages)
     cutter.write_output(output)
 
+def convert_args(files: List[str], output: str) -> None:
+    convert(files, output)
+
 def interactive_mode():
     while True:
-            cs = input("choose => merge - order - cut - exit: ").strip()
+            cs = input("choose => merge - order - cut - convert - exit: ").strip()
             match cs:
                 case "merge":
                     interactive_merge()
@@ -75,6 +86,8 @@ def interactive_mode():
                     interactive_order()
                 case "cut":
                     interactive_cut()
+                case "convert": 
+                    interactive_convert()
                 case "exit":
                     print("Exiting program.")
                     break
@@ -84,8 +97,6 @@ def interactive_mode():
 
 def interactive_merge():
     merger = PDFMergerManager()
-
-    merger.add_file(validate_file_path())
 
     try:
         n = int(input("# of files you want to merge: "))
@@ -132,15 +143,29 @@ def interactive_cut():
     cut_pages = int(input("Enter pages to cut: "))
     cut_file(path, cut_pages)
 
-def validate_file_path(file):
+def interactive_convert(): # TODO
+    print("Will be added later")
+
+def validate_suffix(file: str, suffix: str) -> str : # suffix should sth. like: '.pdf' or '.jpg'
     p = Path(file)
-    if p.suffix.lower() != ".pdf":
-        p = p.with_suffix(".pdf")
-    file = str(p)
+    if p.suffix.lower() != suffix:
+        p = p.with_suffix(suffix)
+    return str(p)
+
+def validate_file_path(file):
     if not Path(file).exists():
         exit(f"File not Found \nPath of the file: {Path(file).resolve()} \nPath of the current directory: {Path.cwd()}")
     return file
-    
+
+def validate_pdf_path(file: str) -> str:
+    file = validate_suffix(file, ".pdf")
+    file = validate_file_path()
+    return file
+
+def validate_img_path(file: str) -> str:
+    file = validate_suffix(file, ".jpg") # TODO it should autmotically check the suffix instead of adding .jpg 
+    file = validate_file_path()
+
 def validate_file_path_interactive():
     while True:
         path = input("Give the path to the main file: ").strip()

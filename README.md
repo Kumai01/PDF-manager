@@ -7,18 +7,19 @@ A simple command-line tool to manage PDFs using Python.
 ## 📦 Requirements
 
 - Python 3.x
-- `PyPDF2` library
 
 ---
 
 ## 🪟 Windows Installation
 
 1. Make sure Python is installed. You can download it from [python.org](https://www.python.org/downloads/).
-2. install the project:
+2. download the repo:
+code -> Download ZIP
+3. in the project folder install it using pip:
 ```bash 
 pip install .
 ```
-3. verify installation
+4. verify installation
 ```bash
 pdfm --version
 ```
@@ -33,11 +34,13 @@ python3 -m venv myenv
 ```bash
 source myenv/bin/activate
 ```
-4. Install the project:
+4. download the repo:
+code -> Download ZIP
+5. in the project folder install it using pip:
 ```bash 
 pip install .
 ```
-5. Verify installation:
+6. Verify installation:
 ```bash
 pdfm --version
 ```
