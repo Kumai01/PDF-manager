@@ -1,3 +1,4 @@
+from typing import List
 import argparse
 from pathlib import Path
 
@@ -5,6 +6,7 @@ from .__version__ import __version__
 from .merge import PDFMergerManager
 from .order import PDFOrderManager
 from .cut import PDFCutterManager, cut_file
+from .convert import convert
 from .gui import run_gui
 
 def main():
@@ -32,6 +34,10 @@ def main():
     cut_parser.add_argument("pages", nargs="+", help="Pages to cut")
     cut_parser.add_argument("-o", "--output", help="Ouput PDF file")
 
+    convert_parser = subparsers.add_parser("convert")
+    convert_parser.add_argument("files", nargs="+", help="images to convert")
+    convert_parser.add_argument("-o", "--output", help="Ouput PDF file")
+
     args = parser.parse_args()
     if args.command == "merge":
         merge_args(args.files, args.output)
@@ -39,6 +45,8 @@ def main():
         order_args(args.file, args.pages, args.after, args.output)
     elif args.command == "cut":
         cut_args(args.file, args.pages, args.output)
+    elif args.command == "convert":
+        convert_args(args.files, args.output)
     elif args.command == "gui":
         run_gui()
     else:
@@ -64,6 +72,9 @@ def cut_args(file, pages, output):
     cutter = PDFCutterManager(file)
     cutter.cut(pages)
     cutter.write_output(output)
+
+def convert_args(files: List[str], output: str) -> None:
+    convert(files, output)
 
 def interactive_mode():
     while True:
