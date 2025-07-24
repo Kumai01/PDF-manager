@@ -1,3 +1,4 @@
+from typing import List
 from PyPDF2 import PdfReader as r
 from PyPDF2 import PdfWriter as w
 from pathlib import Path
@@ -17,7 +18,7 @@ class PDFOrderManager:
     def num_pages(self):
         return len(self.reader.pages)
 
-    def order_pages(self, pages_together, before = None):
+    def get_new_order(self, pages_together, before = None) -> List[int]:
         if before is None:
             before = self.num_pages() - 1
         new_order = []
@@ -29,6 +30,11 @@ class PDFOrderManager:
             
             if i == before:
                 new_order.extend(pages_together)
+        
+        return new_order
+
+    def order_pages(self, pages_together, before = None):
+        new_order = self.get_new_order(pages_together, before)
         self.order_pages(new_order=new_order)
 
     def order_pages(self, new_order):
