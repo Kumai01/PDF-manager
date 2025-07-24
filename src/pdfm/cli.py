@@ -18,6 +18,7 @@ def main():
     subparsers = parser.add_subparsers(dest="command")
 
     gui_parser = subparsers.add_parser("gui")
+    interactive_parser = subparsers.add_parser("interactive")
 
     merge_parser = subparsers.add_parser("merge")
     merge_parser.add_argument("files", nargs="+", help="PDF files to merge")
@@ -47,10 +48,10 @@ def main():
         cut_args(args.file, args.pages, args.output)
     elif args.command == "convert":
         convert_args(args.files, args.output)
-    elif args.command == "gui":
-        run_gui()
-    else:
+    elif args.command == "interactive":
         interactive_mode()
+    else:
+        run_gui()
 
 def merge_args(files, output):
     merger = PDFMergerManager()
