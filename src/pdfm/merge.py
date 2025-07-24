@@ -16,7 +16,9 @@ class PDFMergerManager:
 
         self.merger.append(file)
 
-    def write_output(self, output_name = None):
+    def write_output(self, output_name = None) -> str:
+        if self.first_file is None:
+            return ""
         return write_output(self.merger, output_name, self.first_file)
 
 if __name__ == "__main__":

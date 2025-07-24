@@ -58,7 +58,7 @@ class Application(tk.Tk):
     def choose_file_and_order_buttons(self) -> None:
         self.choose_file()
         self.orderer : PDFOrderManager = PDFOrderManager(self.file_path_var.get())
-        self._update_order(list(range(1, self.orderer.num_pages() + 1)))
+        self._update_order(list(range(1, self.orderer.get_num_pages() + 1)))
         ttk.Button(self.order_tab, text="Reorder all pages", command=self.take_pages_all).grid(row=1, column=0, sticky="wne", columnspan=2)
         ttk.Button(self.order_tab, text="Reorder some pages", command=self.take_pages_some).grid(row=1, column=2, sticky="wne", columnspan=2)
 
@@ -81,7 +81,7 @@ class Application(tk.Tk):
         merger: PDFMergerManager = PDFMergerManager()
         for file in files:
             merger.add_file(file)
-        final_path: str = str(merger.write_output())
+        final_path: str = merger.write_output()
         files = []
         self.listbox.delete(0, tk.END)
         self.success_message(final_path)
@@ -90,16 +90,16 @@ class Application(tk.Tk):
         if self.new_order is not None:
             self.orderer.order_pages(new_order=self.new_order)
 
-            self._update_order([i for i in range(1, self.orderer.num_pages())])
+            self._update_order([i for i in range(1, self.orderer.get_num_pages())])
 
-            final_path: str = str(self.orderer.write_output())
+            final_path: str = self.orderer.write_output()
             self.success_message(final_path)
 
     def take_pages_all(self):
-        order_str: str = str(simpledialog.askstring("Page Order", f"Enter new order (1-{self.orderer.num_pages()}), comma-separated):"))
+        order_str: str = str(simpledialog.askstring("Page Order", f"Enter new order (1-{self.orderer.get_num_pages()}), comma-separated):"))
         
         self._update_order([int(i.strip()) for i in order_str.split(",")])
-        if any(i < 1 or i > self.orderer.num_pages() for i in self.new_order):
+        if any(i < 1 or i > self.orderer.get_num_pages() for i in self.new_order):
             raise ValueError("Page numbers out of range.")
         
     def take_pages_some(self):

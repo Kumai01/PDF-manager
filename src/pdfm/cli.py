@@ -53,22 +53,22 @@ def main():
     else:
         run_gui()
 
-def merge_args(files, output):
+def merge_args(files: List[str], output: str) -> None:
     merger = PDFMergerManager()
     for file in files:
         file = validate_pdf_path(file)
         merger.add_file(file)
-    final_path = merger.write_output(output)
+    final_path: str = merger.write_output(output)
     print("file is in ", Path(final_path))
 
-def order_args(file, pages, before, output):
+def order_args(file: str, pages: List[int], before: int, output: str) -> None:
     file = validate_pdf_path(file)
-    order = PDFOrderManager(file)
-    order.put_pages_before([int(c) for c in pages], int(before))
-    final_path = order.write_output(output)
+    orderer = PDFOrderManager(file)
+    orderer.put_pages_before([int(c) for c in pages], int(before))
+    final_path = orderer.write_output(output)
     print("file is in: ", Path(final_path))
 
-def cut_args(file, pages, output):
+def cut_args(file: str, pages: List[int], output: str) -> None:
     file = validate_pdf_path(file)
     cutter = PDFCutterManager(file)
     cutter.cut(pages)
@@ -118,7 +118,7 @@ def interactive_order():
     file = input("Enter the path to the main file: ")
     file = validate_pdf_path(file)
     order = PDFOrderManager(file)
-    num_pages = order.num_pages()
+    num_pages = order.get_num_pages()
 
     pages = []
     while True:

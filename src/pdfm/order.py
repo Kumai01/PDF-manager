@@ -10,19 +10,19 @@ from tkinter import ttk
 from tkinter import filedialog
 
 class PDFOrderManager:
-    def __init__(self, main_file):
+    def __init__(self, main_file: str):
         self.main_file = main_file
         self.reader = r(main_file)
         self.writer = None
 
-    def num_pages(self):
+    def get_num_pages(self) -> int:
         return len(self.reader.pages)
 
-    def get_new_order(self, pages_together, before = None) -> List[int]:
+    def get_new_order(self, pages_together: List[int], before: int | None = None) -> List[int]:
         if before is None:
-            before = self.num_pages() - 1
+            before = self.get_num_pages() - 1
         new_order = []
-        for i in range(1, self.num_pages() + 1):
+        for i in range(1, self.get_num_pages() + 1):
             if i in pages_together:
                 continue
 
@@ -33,16 +33,16 @@ class PDFOrderManager:
         
         return new_order
 
-    def put_pages_before(self, pages_together, before = None):
-        new_order = self.get_new_order(pages_together, before)
+    def put_pages_before(self, pages_together: List[int], before: int | None = None) -> None:
+        new_order: List[int] = self.get_new_order(pages_together, before)
         self.order_pages(new_order=new_order)
 
-    def order_pages(self, new_order):
+    def order_pages(self, new_order: List[int]) -> None:
         self.writer = w()
         for i in new_order:
             self.writer.add_page(self.reader.pages[i - 1])
 
-    def write_output(self, output_name = None):
+    def write_output(self, output_name: str | None = None) -> str:
         if self.writer is None:
             raise ValueError("No ordered pages to write. Call order_pages first.")
         return write_output(self.writer, output_name, self.main_file)

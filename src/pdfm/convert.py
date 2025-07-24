@@ -3,7 +3,7 @@ import img2pdf
 
 from .utils import write_suffix_if_needed
 
-def convert(imgs: List[str], output: str = "output.pdf") -> str:
+def convert(imgs: List[str], output: str = "output.pdf") -> None:
     output = write_suffix_if_needed(output)
     with open(f"pdfm_output/{output}", "wb") as f:
         f.write(img2pdf.convert(imgs))
