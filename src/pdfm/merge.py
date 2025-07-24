@@ -20,7 +20,7 @@ class PDFMergerManager:
         return write_output(self.merger, output_name, self.first_file)
 
 if __name__ == "__main__":
-    from cli import interactive_merge
+    from .cli import interactive_merge
     interactive_merge()
 
 def merge_window():

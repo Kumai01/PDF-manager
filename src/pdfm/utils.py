@@ -18,5 +18,6 @@ def write_output(writer, output_name, first_file):
         return output_path
 
 def write_suffix_if_needed(name: str) -> str:
-     if len(name) < 4 or name[-4:] != ".pdf":
+    if len(name) < 4 or name[-4:] != ".pdf":
         name += ".pdf"
+    return name

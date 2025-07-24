@@ -49,7 +49,7 @@ class PDFOrderManager:
 
         
 if __name__ == "__main__":
-    from cli import interactive_order
+    from .cli import interactive_order
     interactive_order()
 
 def order_window():

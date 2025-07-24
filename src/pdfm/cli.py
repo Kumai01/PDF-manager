@@ -98,11 +98,13 @@ def interactive_mode():
 
 def interactive_merge():
     merger = PDFMergerManager()
-
-    try:
-        n = int(input("# of files you want to merge: "))
-    except ValueError:
-        print("Please enter a valid number.")
+    
+    while(True):
+        try:
+            n = int(input("# of files you want to merge: "))
+            break
+        except ValueError:
+            print("Please enter a valid number.")
     i = 0
     while i < n:
         try:
@@ -113,7 +115,9 @@ def interactive_merge():
     print("output is in: ", merger.write_output())
     
 def interactive_order():
-    order = PDFOrderManager(validate_file_path())
+    file = input("Enter the path to the main file: ")
+    file = validate_pdf_path(file)
+    order = PDFOrderManager(file)
     num_pages = order.num_pages()
 
     pages = []
@@ -128,19 +132,23 @@ def interactive_order():
         except ValueError:
             print("Please enter a valid number or '-1' to finish.")
     
-    try:
-        before = int(input("Enter after what page you want to put the pages: ").strip()) - 1
-        if before > num_pages or before in pages:
-            raise ValueError
-    except ValueError:
-        print("Please enter a valid page that is not in the moved pages")
+    while(True):
+        try:
+            before = int(input("Enter after what page you want to put the pages: ").strip()) - 1
+            if before > num_pages or before in pages:
+                raise ValueError
+            break
+        except ValueError:
+            print("Please enter a valid page that is not in the moved pages")
 
     order.put_pages_before(pages, before)    
     
     print("output is in: ", order.write_output())
 
 def interactive_cut():
-    path = validate_file_path()
+    file = input("Enter the path to the main file: ")
+    file = validate_pdf_path(file)
+    path = validate_file_path(file)
     cut_pages = int(input("Enter pages to cut: "))
     cut_file(path, cut_pages)
 
@@ -160,12 +168,13 @@ def validate_file_path(file):
 
 def validate_pdf_path(file: str) -> str:
     file = validate_suffix(file, ".pdf")
-    file = validate_file_path()
+    file = validate_file_path(file)
     return file
 
 def validate_img_path(file: str) -> str:
     file = validate_suffix(file, ".jpg") # TODO it should autmotically check the suffix instead of adding .jpg 
-    file = validate_file_path()
+    file = validate_file_path(file)
+    return file
 
 def validate_file_path_interactive():
     while True:
