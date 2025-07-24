@@ -58,7 +58,7 @@ class Application(tk.Tk):
     def choose_file_and_order_buttons(self) -> None:
         self.choose_file()
         self.orderer : PDFOrderManager = PDFOrderManager(self.file_path_var.get())
-        self.file_order_var.set(f"{list(range(1, self.orderer.num_pages()))}")
+        self._update_order(list(range(1, self.orderer.num_pages() + 1)))
         ttk.Button(self.order_tab, text="Reorder all pages", command=self.take_pages_all).grid(row=1, column=0, sticky="wne", columnspan=2)
         ttk.Button(self.order_tab, text="Reorder some pages", command=self.take_pages_some).grid(row=1, column=2, sticky="wne", columnspan=2)
 
@@ -89,33 +89,34 @@ class Application(tk.Tk):
     def order(self) -> None:
         if self.new_order is not None:
             self.orderer.order_pages(new_order=self.new_order)
+
+            self._update_order([i for i in range(1, self.orderer.num_pages())])
+
             final_path: str = str(self.orderer.write_output())
             self.success_message(final_path)
-            return
-        if self.pages_together is not None and self.after is not None:
-            self.orderer.put_pages_before(pages_together=self.pages_together, before=self.before)
-            final_path: str = str(self.orderer.write_output())
-            self.success_message(final_path)
-            return
 
     def take_pages_all(self):
         order_str: str = str(simpledialog.askstring("Page Order", f"Enter new order (1-{self.orderer.num_pages()}), comma-separated):"))
-        ttk.Label(self.order_tab, text=order_str)
         
-        self.new_order = [int(i.strip()) - 1 for i in order_str.split(",")]
-        if any(i < 0 or i >= self.orderer.num_pages() for i in self.new_order):
+        self._update_order([int(i.strip()) for i in order_str.split(",")])
+        if any(i < 1 or i > self.orderer.num_pages() for i in self.new_order):
             raise ValueError("Page numbers out of range.")
         
-        self.file_order_var.set(str(self.new_order))
-
     def take_pages_some(self):
         dialog = TwoFieldDialog(self)
         if dialog.result:
             self.pages_together, self.before = dialog.result
-            self.file_order_var.set(str(self.orderer.get_new_order(self.pages_together, self.before)))
-            
+            self.pages_together = [int(i.strip()) for i in self.pages_together.split(",")]
+            self.before = int(self.before)
+
+            self._update_order(self.orderer.get_new_order(self.pages_together, self.before))
+    
     def success_message(self, final_path: str) -> None:
         messagebox.showinfo("Success", f"Files are merged in: {final_path}")
+
+    def _update_order(self, new_order: List[int]) -> None:
+        self.new_order = new_order
+        self.file_order_var.set(str(self.new_order))
 
 class Tab(ttk.Frame):
     def __init__(self, parent: tk.Tk|ttk.Frame):
