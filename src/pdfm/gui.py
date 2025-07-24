@@ -50,8 +50,8 @@ class Application(tk.Tk):
         self.notebook.add(self.order_tab, text="Order")
 
         self.order_tab.create_wide_button(text="Choose a File", command=self.choose_file_and_order_buttons, row=0)
-        self.order_tab.create_label(text=str(self.file_order_var), row=2)
-        self.order_tab.create_label(text=str(self.file_path_var), row=3)
+        self.order_tab.create_label(textvariable=self.file_order_var, row=2)
+        self.order_tab.create_label(textvariable=self.file_path_var, row=3)
 
         self.order_tab.create_wide_button(text="Order", command=self.order, row=4)
 
@@ -81,7 +81,7 @@ class Application(tk.Tk):
         merger: PDFMergerManager = PDFMergerManager()
         for file in files:
             merger.add_file(file)
-        final_path: str = merger.write_output()
+        final_path: str = str(merger.write_output())
         files = []
         self.listbox.delete(0, tk.END)
         self.success_message(final_path)
@@ -89,17 +89,17 @@ class Application(tk.Tk):
     def order(self) -> None:
         if self.new_order is not None:
             self.orderer.order_pages(new_order=self.new_order)
-            final_path: str = self.orderer.write_output()
+            final_path: str = str(self.orderer.write_output())
             self.success_message(final_path)
             return
         if self.pages_together is not None and self.after is not None:
-            self.orderer.order_pages(pages_together=self.pages_together, before=self.before)
-            final_path: str = self.orderer.write_output()
+            self.orderer.put_pages_before(pages_together=self.pages_together, before=self.before)
+            final_path: str = str(self.orderer.write_output())
             self.success_message(final_path)
             return
 
     def take_pages_all(self):
-        order_str = simpledialog.askstring("Page Order", f"Enter new order (1-{self.orderer.num_pages()}), comma-separated):")
+        order_str: str = str(simpledialog.askstring("Page Order", f"Enter new order (1-{self.orderer.num_pages()}), comma-separated):"))
         ttk.Label(self.order_tab, text=order_str)
         
         self.new_order = [int(i.strip()) - 1 for i in order_str.split(",")]
@@ -112,7 +112,7 @@ class Application(tk.Tk):
         dialog = TwoFieldDialog(self)
         if dialog.result:
             self.pages_together, self.before = dialog.result
-            self.file_order_var.set(self.orderer.get_new_order(self.pages_together, self.before))
+            self.file_order_var.set(str(self.orderer.get_new_order(self.pages_together, self.before)))
             
     def success_message(self, final_path: str) -> None:
         messagebox.showinfo("Success", f"Files are merged in: {final_path}")
@@ -135,16 +135,16 @@ class Tab(ttk.Frame):
     def create_wide_button(self, text: str, command: Callable, row: int) -> None:
         ttk.Button(self, text=text, command=command).grid(row=row, column=0, sticky="wne", columnspan=4)
 
-    def create_label(self, text: str, row: int) -> None:
-        ttk.Label(self, textvariable=text).grid(row=row, column=0, sticky="wne", columnspan=4)
+    def create_label(self, textvariable: tk.Variable, row: int) -> None:
+        ttk.Label(self, textvariable=textvariable).grid(row=row, column=0, sticky="wne", columnspan=4)
 
 class TwoFieldDialog(simpledialog.Dialog):
-    def body(self, parent: ttk.Frame):
-        tk.Label(parent, text="Pages to drage:").grid(row=0)
-        tk.Label(parent, text="Put the pages after:").grid(row=1)
+    def body(self, master: tk.Frame):
+        tk.Label(master, text="Pages to drag:").grid(row=0)
+        tk.Label(master, text="Put the pages after:").grid(row=1)
 
-        self.pages_to_move = tk.Entry(parent)
-        self.before = tk.Entry(parent)
+        self.pages_to_move = tk.Entry(master)
+        self.before = tk.Entry(master)
 
         self.pages_to_move.grid(row=0, column=1)
         self.before.grid(row=1, column=1)

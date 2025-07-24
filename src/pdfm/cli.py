@@ -64,7 +64,7 @@ def merge_args(files, output):
 def order_args(file, pages, before, output):
     file = validate_pdf_path(file)
     order = PDFOrderManager(file)
-    order.order_pages([int(c) for c in pages], int(before))
+    order.put_pages_before([int(c) for c in pages], int(before))
     final_path = order.write_output(output)
     print("file is in: ", Path(final_path))
 
@@ -135,7 +135,7 @@ def interactive_order():
     except ValueError:
         print("Please enter a valid page that is not in the moved pages")
 
-    order.order_pages(pages, before)    
+    order.put_pages_before(pages, before)    
     
     print("output is in: ", order.write_output())
 

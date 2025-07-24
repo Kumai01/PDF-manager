@@ -33,7 +33,7 @@ class PDFOrderManager:
         
         return new_order
 
-    def order_pages(self, pages_together, before = None):
+    def put_pages_before(self, pages_together, before = None):
         new_order = self.get_new_order(pages_together, before)
         self.order_pages(new_order=new_order)
 
