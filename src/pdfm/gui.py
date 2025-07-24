@@ -3,8 +3,8 @@ import tkinter as tk
 from tkinter import filedialog, simpledialog, messagebox, StringVar
 from tkinter import ttk # For themed widgets
 
-from pdfm.merge import PDFMergerManager
-from pdfm.order import PDFOrderManager
+from .merge import PDFMergerManager
+from .order import PDFOrderManager
 
 def run_gui():
     root: Application = Application()
@@ -24,6 +24,7 @@ class Application(tk.Tk):
         self.notebook.grid(row=0, column=0, sticky="nsew")
 
         self.file_path_var = StringVar(self)
+        self.file_order_var = StringVar(self)
         self.create_home_tab()
         self.create_merge_tab()
         self.create_order_tab()
@@ -49,13 +50,15 @@ class Application(tk.Tk):
         self.notebook.add(self.order_tab, text="Order")
 
         self.order_tab.create_wide_button(text="Choose a File", command=self.choose_file_and_order_buttons, row=0)
-        self.order_tab.create_label(text=self.file_path_var, row=2)
+        self.order_tab.create_label(text=str(self.file_order_var), row=2)
+        self.order_tab.create_label(text=str(self.file_path_var), row=3)
 
-        self.order_tab.create_wide_button(text="Order", command=self.order, row=3)
+        self.order_tab.create_wide_button(text="Order", command=self.order, row=4)
 
     def choose_file_and_order_buttons(self) -> None:
         self.choose_file()
-        self.order : PDFMergerManager = PDFOrderManager(self.file_path_var.get())
+        self.orderer : PDFOrderManager = PDFOrderManager(self.file_path_var.get())
+        self.file_order_var.set(f"{list(range(1, self.orderer.num_pages()))}")
         ttk.Button(self.order_tab, text="Reorder all pages", command=self.take_pages_all).grid(row=1, column=0, sticky="wne", columnspan=2)
         ttk.Button(self.order_tab, text="Reorder some pages", command=self.take_pages_some).grid(row=1, column=2, sticky="wne", columnspan=2)
 
@@ -67,6 +70,7 @@ class Application(tk.Tk):
         if file_path:
             self.file_path_var.set(file_path)
             return file_path
+        return ""
 
     def update_files(self, files: List[str]) -> None:
         file_path: str = self.choose_file()
@@ -80,32 +84,35 @@ class Application(tk.Tk):
         final_path: str = merger.write_output()
         files = []
         self.listbox.delete(0, tk.END)
+        self.success_message(final_path)
 
     def order(self) -> None:
         if self.new_order is not None:
-            self.order.order_pages(new_order=self.new_order)
-            final_path: str = self.order.write_output()
+            self.orderer.order_pages(new_order=self.new_order)
+            final_path: str = self.orderer.write_output()
             self.success_message(final_path)
             return
         if self.pages_together is not None and self.after is not None:
-            self.order.order_pages(pages_together=self.pages_together, before=self.before)
-            final_path: str = self.order.write_output()
+            self.orderer.order_pages(pages_together=self.pages_together, before=self.before)
+            final_path: str = self.orderer.write_output()
             self.success_message(final_path)
             return
 
     def take_pages_all(self):
-        order_str = simpledialog.askstring("Page Order", f"Enter new order (1-{self.order.num_pages()}), comma-separated):")
+        order_str = simpledialog.askstring("Page Order", f"Enter new order (1-{self.orderer.num_pages()}), comma-separated):")
         ttk.Label(self.order_tab, text=order_str)
         
         self.new_order = [int(i.strip()) - 1 for i in order_str.split(",")]
-        if any(i < 0 or i >= self.order.num_pages() for i in self.new_order):
+        if any(i < 0 or i >= self.orderer.num_pages() for i in self.new_order):
             raise ValueError("Page numbers out of range.")
         
+        self.file_order_var.set(str(self.new_order))
 
     def take_pages_some(self):
         dialog = TwoFieldDialog(self)
         if dialog.result:
             self.pages_together, self.before = dialog.result
+            self.file_order_var.set(self.orderer.get_new_order(self.pages_together, self.before))
             
     def success_message(self, final_path: str) -> None:
         messagebox.showinfo("Success", f"Files are merged in: {final_path}")
